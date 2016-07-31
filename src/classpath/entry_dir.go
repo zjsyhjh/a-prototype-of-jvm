@@ -5,6 +5,9 @@ import (
 	"path/filepath"
 )
 
+/*
+ * 格式为：/pathto/xxx.class
+ */
 type DirEntry struct {
 	absPath string
 }
