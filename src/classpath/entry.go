@@ -11,7 +11,7 @@ import (
 const pathListSeparator string = string(os.PathListSeparator)
 
 /*
- * 入口接口
+ * 入口接口, 某个数据类型实现了该接口的所有方法，则实现了该接口
  */
 type Entry interface {
 	readClass(className string) ([]byte, Entry, error)
@@ -19,7 +19,7 @@ type Entry interface {
 }
 
 /*
- * 
+ *
  */
 func newEntry(path string) Entry {
 
@@ -27,7 +27,7 @@ func newEntry(path string) Entry {
 		return newCompositeEntry(path)
 	}
 
-    if strings.HasSuffix(path, "*") {
+	if strings.HasSuffix(path, "*") {
 		return newWildcardEntry(path)
 	}
 
