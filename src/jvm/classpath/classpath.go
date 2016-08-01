@@ -91,3 +91,7 @@ func (cp *ClassPath) readClass(className string) ([]byte, Entry, error) {
 	}
 	return cp.userClassPath.readClass(className)
 }
+
+func (cp *ClassPath) String() string {
+	return cp.userClassPath.String()
+}
