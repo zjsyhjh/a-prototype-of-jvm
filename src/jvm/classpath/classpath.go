@@ -79,7 +79,7 @@ func exists(filePath string) bool {
 /*
  *给输入的类名添加后缀.class, 并且读取指定类
  */
-func (cp *ClassPath) readClass(className string) ([]byte, Entry, error) {
+func (cp *ClassPath) ReadClass(className string) ([]byte, Entry, error) {
 	className += ".class"
 
 	if bytes, entry, err := cp.bootClassPath.readClass(className); err == nil {
@@ -93,5 +93,5 @@ func (cp *ClassPath) readClass(className string) ([]byte, Entry, error) {
 }
 
 func (cp *ClassPath) String() string {
-	return cp.userClassPath.String()
+	return "bootClassPath = " + cp.bootClassPath.String() + "\n" + "extClassPath = " + cp.extClassPath.String() + "\n" + "userClassPath = " + cp.userClassPath.String()
 }

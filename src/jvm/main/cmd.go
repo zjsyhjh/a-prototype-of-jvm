@@ -7,7 +7,8 @@ import (
 )
 
 /*
- * 命令行参数选项，
+ * 命令行参数选项
+ * -xjre选项输入时不能用通用符
  */
 type Cmd struct {
 	helpFlag    bool
