@@ -16,7 +16,7 @@ type Cmd struct {
 	className   string
 	classArgs   []string
 	cpOptinon   string
-	xjreOption  string
+	XjreOption  string
 }
 
 /*
@@ -33,7 +33,7 @@ func parseCmd() *Cmd {
 	flag.BoolVar(&cmd.versionFlag, "version", false, "this is version information")
 	flag.StringVar(&cmd.cpOptinon, "classpath", "", "the user's classpath")
 	flag.StringVar(&cmd.cpOptinon, "cp", "", "the user's classpath")
-	flag.StringVar(&cmd.xjreOption, "xjre", "", "path to jre")
+	flag.StringVar(&cmd.XjreOption, "Xjre", "", "path to jre")
 	/*
 	 * 必须放在标志性参数后面，否则会出现解析错误
 	 * 标志性参数如 -cp="xxx", 非标志性参数如 arg1, arg2

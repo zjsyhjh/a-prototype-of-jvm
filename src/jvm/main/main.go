@@ -8,7 +8,7 @@ import (
 
 func startJVM(cmd *Cmd) {
 	fmt.Println("JVM is starting...")
-	cp := classpath.ParseClassPathOption(cmd.xjreOption, cmd.cpOptinon)
+	cp := classpath.ParseClassPathOption(cmd.XjreOption, cmd.cpOptinon)
 	fmt.Printf("%v\n", cp)
 	fmt.Printf("class : %v, args : %v\n", cmd.className, cmd.classArgs)
 
@@ -25,7 +25,8 @@ func startJVM(cmd *Cmd) {
 }
 
 /*
- *
+ * 执行go install /path/dir/*
+ * 在bin目录下，可以看到可执行文件main, 执行./main [options] class [args...]
  */
 func main() {
 
