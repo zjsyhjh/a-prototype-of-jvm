@@ -60,7 +60,7 @@ func (cr *ClassReader) readUint16Table() []uint16 {
 }
 
 /*
- * 读取指定数量的字节
+ * 读取指定数目的字节
  */
 func (cr *ClassReader) readBytes(n uint32) []byte {
 	bytes := cr.data[:n]
