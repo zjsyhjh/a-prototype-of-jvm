@@ -152,3 +152,31 @@ func (cf *ClassFile) Fields() []*MemberInfo {
 func (cf *ClassFile) Methods() []*MemberInfo {
 	return cf.methods
 }
+
+/*
+ * 返回类名
+ */
+func (cf *ClassFile) ClassName() string {
+	return cf.constantPool.getClassName(cf.thisClass)
+}
+
+/*
+ * 返回父类名, java.lang.Object没有父类，superclass为0
+ */
+func (cf *ClassFile) SuperClassName() string {
+	if cf.superClass > 0 {
+		return cf.constantPool.getClassName(cf.superClass)
+	}
+	return ""
+}
+
+/*
+ * 返回接口名
+ */
+func (cf *ClassFile) InterfaceNames() []string {
+	interfaceNames := make([]string, len(cf.interfaces))
+	for i, interfaceNameIndex := range cf.interfaces {
+		interfaceNames[i] = cf.constantPool.getClassName(interfaceNameIndex)
+	}
+	return interfaceNames
+}
