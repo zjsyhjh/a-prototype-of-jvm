@@ -18,7 +18,7 @@ type ConstantPool struct {
 func getConstantPool(cr *ClassReader) ConstantPool {
 	constantPool := ConstantPool{}
 
-	size := cr.readUint16()
+	size := int(cr.readUint16())
 	constantPool.constantPool = make([]ConstantInfo, size)
 
 	for i := 1; i < size; i++ {
@@ -28,7 +28,7 @@ func getConstantPool(cr *ClassReader) ConstantPool {
 			i++
 		}
 	}
-	return constantPool.constantPool
+	return constantPool
 }
 
 /*
@@ -38,7 +38,7 @@ func (cp ConstantPool) getConstantInfo(index uint16) ConstantInfo {
 	if constantInfo := cp.constantPool[index]; constantInfo != nil {
 		return constantInfo
 	}
-	panic("Invalid constant pool index: " + strconv.Itoa(index))
+	panic("Invalid constant pool index: " + strconv.Itoa(int(index)))
 }
 
 /*
@@ -65,4 +65,11 @@ func (cp ConstantPool) getClassName(index uint16) string {
 func (cp ConstantPool) getUtf8(index uint16) string {
 	utf8Info := cp.getConstantInfo(index).(*ConstantUtf8Info)
 	return utf8Info.value
+}
+
+/*
+ * 返回ConstantInfo数组
+ */
+func (cp ConstantPool) ConstantPool() []ConstantInfo {
+	return cp.constantPool
 }

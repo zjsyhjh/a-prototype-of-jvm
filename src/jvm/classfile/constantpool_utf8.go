@@ -31,7 +31,7 @@ func (cui *ConstantUtf8Info) Value() string {
 /*
  * mutf8 -> utf16 -> utf32 -> string, 参考 java.io.DataInputStream.readUTF(DataInput)
  */
-func decodeMUTF8(bytes []byte) string {
+func decodeMUTF8(bytearr []byte) string {
 	utflen := len(bytearr)
 	chararr := make([]uint16, utflen)
 
