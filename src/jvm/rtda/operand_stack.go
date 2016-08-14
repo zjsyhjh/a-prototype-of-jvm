@@ -81,3 +81,16 @@ func (self *OperandStack) PopRef() *Object {
 	self.slots[self.size].reference = nil
 	return ref
 }
+
+/*
+ * 和其他指令不同，栈指令并不关心变量类型
+ */
+func (self *OperandStack) PushSlot(slot Slot) {
+	self.slots[self.size] = slot
+	self.size++
+}
+
+func (self *OperandStack) PopSlot() Slot {
+	self.size--
+	return self.slots[self.size]
+}
