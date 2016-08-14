@@ -41,6 +41,7 @@ func printClassFileInfo(cf *classfile.ClassFile) {
 
 func startJVM(cmd *Cmd) {
 	fmt.Println("JVM is starting...")
+
 	cp := classpath.ParseClassPathOption(cmd.XjreOption, cmd.cpOptinon)
 	fmt.Printf("%v\n", cp)
 	fmt.Printf("class : %v, args : %v\n", cmd.className, cmd.classArgs)
