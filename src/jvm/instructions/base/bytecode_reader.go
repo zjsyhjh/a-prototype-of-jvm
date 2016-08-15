@@ -45,3 +45,24 @@ func (self *BytecodeReader) ReadInt32() int32 {
 	byte4 := int32(self.ReadUint8())
 	return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4
 }
+
+/*
+ * call by tableswitch and lookupswitch
+ */
+func (self *BytecodeReader) ReadInt32s(size int32) []int32 {
+	ints := make([]int32, size)
+	for i := range ints {
+		ints[i] = self.ReadInt32()
+	}
+	return ints
+}
+
+/*
+ * call by tableswitch and lookupswitch
+ * tableswitch指令操作码的后面有0~3个字节的padding， 以保证defaultOffset在字节码中的地址是4的倍数
+ */
+func (self *BytecodeReader) SkipPadding() {
+	for self.pc%4 != 0 {
+		self.ReadUint8()
+	}
+}
