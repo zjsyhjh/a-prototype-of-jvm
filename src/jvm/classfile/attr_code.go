@@ -79,12 +79,12 @@ func (ca *CodeAttribute) readInfo(cr *ClassReader) {
 	ca.attributes = readAttributes(cr, ca.constantPool)
 }
 
-func (ca *CodeAttribute) MaxStack() uint16 {
-	return ca.maxStack
+func (ca *CodeAttribute) MaxStack() uint {
+	return uint(ca.maxStack)
 }
 
-func (ca *CodeAttribute) MaxLocals() uint16 {
-	return ca.maxLocals
+func (ca *CodeAttribute) MaxLocals() uint {
+	return uint(ca.maxLocals)
 }
 
 func (ca *CodeAttribute) Code() []byte {
