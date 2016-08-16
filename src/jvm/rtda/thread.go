@@ -23,6 +23,13 @@ func NewThread() *Thread {
 }
 
 /*
+ * 创建栈帧
+ */
+func (td *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
+	return newFrame(td, maxLocals, maxStack)
+}
+
+/*
  * 返回当前线程PC寄存器的值
  */
 func (td *Thread) PC() int {
@@ -46,8 +53,8 @@ func (td *Thread) PushFrame(frame *Frame) {
 /*
  * 弹出栈帧
  */
-func (td *Thread) PopFrame() {
-	td.stack.pop()
+func (td *Thread) PopFrame() *Frame {
+	return td.stack.pop()
 }
 
 /*
