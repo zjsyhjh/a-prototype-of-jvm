@@ -1,7 +1,9 @@
 package classfile
 
 /*
- * 一共14种属性，定义一个AttributeInfo接口，需要具体的属性实现
+ * 目前一共14种属性，定义一个AttributeInfo接口，需要具体的属性实现
+ * 属性是可以扩展的，而常量是严格定义的，这也是不使用tag而用属性名来区别不同的属性的原因
+ * 不同的虚拟机可以实现自己定义的属性类型
  attribute_info {
      u2 attribute_name_index;
      u4 attribute_length;

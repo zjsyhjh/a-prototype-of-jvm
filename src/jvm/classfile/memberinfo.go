@@ -30,7 +30,7 @@ type MemberInfo struct {
 }
 
 /*
- * 取得字段或者方法信息表
+ * 取得字段或者方法表，大小为ClassFile中的u2, 也就是说一个类最多只能有65535个方法或者字段
  */
 func readMembers(cr *ClassReader, cp ConstantPool) []*MemberInfo {
 	memberCount := cr.readUint16()
@@ -57,7 +57,7 @@ func readMember(cr *ClassReader, cp ConstantPool) *MemberInfo {
 }
 
 /*
- * 取得访问标志符
+ * 取得访问标志符, 方法或者字段都有方法标志符，例如private, public等，占2个字节
  */
 func (mi *MemberInfo) AccessFlags() uint16 {
 	return mi.accessFlags

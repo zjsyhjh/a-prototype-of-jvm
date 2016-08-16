@@ -154,13 +154,14 @@ func (cf *ClassFile) Methods() []*MemberInfo {
 }
 
 /*
- * 返回类名
+ * 从常量池中寻找类名
  */
 func (cf *ClassFile) ClassName() string {
 	return cf.constantPool.getClassName(cf.thisClass)
 }
 
 /*
+ * 从常量池中查找父类名
  * 返回父类名, java.lang.Object没有父类，superclass为0
  */
 func (cf *ClassFile) SuperClassName() string {
@@ -171,6 +172,7 @@ func (cf *ClassFile) SuperClassName() string {
 }
 
 /*
+ * 从常量池中查找接口名
  * 返回接口名
  */
 func (cf *ClassFile) InterfaceNames() []string {
