@@ -45,9 +45,9 @@ func (cmri *ConstantMemberRefInfo) readInfo(cr *ClassReader) {
 }
 
 func (cmri *ConstantMemberRefInfo) ClassName() string {
-	return cmri.constantPool.getUtf8(cmri.classIndex)
+	return cmri.constantPool.getClassName(cmri.classIndex)
 }
 
-func (cmri *ConstantMemberRefInfo) NameAndTypeDescriptor() string {
-	return cmri.constantPool.getUtf8(cmri.nameAndTypeIndex)
+func (cmri *ConstantMemberRefInfo) NameAndTypeDescriptor() (string, string) {
+	return cmri.constantPool.getNameAndType(cmri.nameAndTypeIndex)
 }
