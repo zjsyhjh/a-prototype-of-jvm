@@ -10,7 +10,7 @@ import (
  * 主要存放从class文件获取的类信息，使用结构体来表示类信息
  * accessFlags是类的访问标志
  * className, superClassName, interfaceNames代表类名、超类名以及接口名， 这些类名都是完全限定名，例如java/lang/String
- *
+ * initStarted字段表示类的<clinit>方法是否已经开始执行
  */
 type Class struct {
 	accessFlags       uint16
@@ -26,6 +26,7 @@ type Class struct {
 	instanceSlotCount uint
 	staticSlotCount   uint
 	staticVars        Slots
+	initStarted       bool
 }
 
 func newClass(cf *classfile.ClassFile) *Class {
@@ -42,6 +43,18 @@ func newClass(cf *classfile.ClassFile) *Class {
 
 func (self *Class) NewObject() *Object {
 	return newObject(self)
+}
+
+func (self *Class) Name() string {
+	return self.className
+}
+
+func (self *Class) InitStarted() bool {
+	return self.initStarted
+}
+
+func (self *Class) StartInit() {
+	self.initStarted = true
 }
 
 /*
@@ -130,6 +143,13 @@ func (self *Class) GetPackageName() string {
  */
 func (self *Class) GetMainMethod() *Method {
 	return self.getStaticMethod("main", "([Ljava/lang/String;)V")
+}
+
+/*
+ * 返回类初始化方法
+ */
+func (self *Class) GetClinitMethod() *Method {
+	return self.getStaticMethod("<clinit>", "()V")
 }
 
 func (self *Class) getStaticMethod(name, descriptor string) *Method {
