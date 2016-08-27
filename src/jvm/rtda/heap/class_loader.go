@@ -12,14 +12,16 @@ import (
  * 类加载的大致步骤: 找到class文件并读入内存；解析class文件，生成虚拟机可以使用的类数据，并放入方法区; 最后进行链接
  */
 type ClassLoader struct {
-	classPath *classpath.ClassPath
-	classMap  map[string]*Class
+	classPath   *classpath.ClassPath
+	classMap    map[string]*Class
+	verboseFlag bool
 }
 
-func NewClassLoader(classPath *classpath.ClassPath) *ClassLoader {
+func NewClassLoader(classPath *classpath.ClassPath, verboseFlag bool) *ClassLoader {
 	return &ClassLoader{
-		classPath: classPath,
-		classMap:  make(map[string]*Class),
+		classPath:   classPath,
+		classMap:    make(map[string]*Class),
+		verboseFlag: verboseFlag,
 	}
 }
 
@@ -37,8 +39,9 @@ func (self *ClassLoader) loadNonArrayClass(className string) *Class {
 	data, entry := self.readClass(className)
 	class := self.defineClass(data)
 	link(class)
-	fmt.Printf("[Loaded %s from %s]\n", className, entry.String())
-
+	if self.verboseFlag {
+		fmt.Printf("[Loaded %s from %s]\n", className, entry.String())
+	}
 	return class
 }
 
@@ -79,6 +82,7 @@ func parseClass(data []byte) *Class {
  */
 func resolveSuperClass(class *Class) {
 	if class.className != "java/lang/Object" {
+		fmt.Printf("className : " + class.className + " superClassName : " + class.superClassName + "\n")
 		class.superClass = class.classLoader.LoadClass(class.superClassName)
 	}
 }
@@ -91,6 +95,9 @@ func resolveInterfaces(class *Class) {
 	if interfaceCount > 0 {
 		class.interfaces = make([]*Class, interfaceCount)
 		for i, interfaceName := range class.interfaceNames {
+			fmt.Printf("ClassName : " + class.className)
+			fmt.Printf(" InterfaceName : " + interfaceName)
+			fmt.Println()
 			class.interfaces[i] = class.classLoader.LoadClass(interfaceName)
 		}
 	}
