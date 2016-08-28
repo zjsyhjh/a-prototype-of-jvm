@@ -1,5 +1,9 @@
 package rtda
 
+import (
+	"jvm/rtda/heap"
+)
+
 /*
  * 栈帧中保存方法执行的状态，包括局部变量表(Local Variable)和操作数栈(Operand Stack)等
  * 用链表来实现栈
@@ -9,14 +13,16 @@ type Frame struct {
 	operandStack *OperandStack
 	lower        *Frame
 	thread       *Thread
+	method       *heap.Method
 	nextPC       int
 }
 
-func newFrame(thread *Thread, maxLocals, maxStack uint) *Frame {
+func newFrame(thread *Thread, method *heap.Method) *Frame {
 	return &Frame{
 		thread:       thread,
-		localVars:    newLocalVars(maxLocals),
-		operandStack: newOperandStack(maxStack),
+		method:       method,
+		localVars:    newLocalVars(method.MaxLocals()),
+		operandStack: newOperandStack(method.MaxStack()),
 	}
 }
 
@@ -42,6 +48,13 @@ func (frame *Frame) Thread() *Thread {
 }
 
 /*
+ * 取得方法
+ */
+func (frame *Frame) Method() *heap.Method {
+	return frame.method
+}
+
+/*
  * 返回下一个PC值
  */
 func (frame *Frame) NextPC() int {
@@ -53,4 +66,8 @@ func (frame *Frame) NextPC() int {
  */
 func (frame *Frame) SetNextPC(nextPC int) {
 	frame.nextPC = nextPC
+}
+
+func (frame *Frame) RevertNextPC() {
+	frame.nextPC = frame.thread.pc
 }
