@@ -11,16 +11,20 @@ import (
  * -Xjre选项输入时不能用通用符
  */
 type Cmd struct {
-	helpFlag    bool
-	versionFlag bool
-	className   string
-	classArgs   []string
-	cpOptinon   string
-	XjreOption  string
+	helpFlag         bool
+	versionFlag      bool
+	verboseClassFlag bool
+	verboseInstFlag  bool
+	className        string
+	classArgs        []string
+	cpOptinon        string
+	XjreOption       string
 }
 
 /*
  * 一般java命令行格式：java [-options] class [args...]
+ * verboseClassFlag用于控制是否把类加载信息输出到控制台
+ * verboseInstFlag用于控制是否把指令执行信息输出到控制台
  *
  */
 
@@ -31,6 +35,9 @@ func parseCmd() *Cmd {
 	flag.BoolVar(&cmd.helpFlag, "help", false, "this is help information")
 	flag.BoolVar(&cmd.helpFlag, "?", false, "this is help information")
 	flag.BoolVar(&cmd.versionFlag, "version", false, "this is version information")
+	flag.BoolVar(&cmd.verboseClassFlag, "verbose", false, "enable verbose output")
+	flag.BoolVar(&cmd.verboseClassFlag, "verbose:class", false, "enable verbose output")
+	flag.BoolVar(&cmd.verboseInstFlag, "verbose:inst", false, "enable verbose output")
 	flag.StringVar(&cmd.cpOptinon, "classpath", "", "the user's classpath")
 	flag.StringVar(&cmd.cpOptinon, "cp", "", "the user's classpath")
 	flag.StringVar(&cmd.XjreOption, "Xjre", "", "path to jre")
@@ -58,4 +65,5 @@ func printUsage() {
 	fmt.Println("-version : show the version of jvm")
 	fmt.Println("-classpath: use this -classpath=classpath")
 	fmt.Println("-cp : use this -cp=classpath")
+	fmt.Println("-verbose:class : use this -verbose:class to control output")
 }
