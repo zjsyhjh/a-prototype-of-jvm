@@ -26,6 +26,12 @@ func (self *PUT_STATIC) Execute(frame *rtda.Frame) {
 	fieldRef := cp.GetConstant(self.Index).(*heap.FieldRef)
 	field := fieldRef.ResolvedField()
 	class := field.Class()
+
+	if !class.InitStarted() {
+		frame.RevertNextPC()
+		base.InitClass(frame.Thread(), class)
+		return
+	}
 	/*
 	 * 如果解析后的字段是实例字段而非静态字段，则抛出异常
 	 * 如果是final字段，则实际操作的是静态变量，只能在类初始化中给它赋值(类初始化方法由编译器生成，为<clinit>)
