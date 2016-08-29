@@ -153,12 +153,12 @@ var (
 	fcmpg   = &FCMPG{}
 	dcmpl   = &DCMPL{}
 	dcmpg   = &DCMPG{}
-	// ireturn = &IRETURN{}
-	// lreturn = &LRETURN{}
-	// freturn = &FRETURN{}
-	// dreturn = &DRETURN{}
-	// areturn = &ARETURN{}
-	// _return = &RETURN{}
+	ireturn = &IRETURN{}
+	lreturn = &LRETURN{}
+	freturn = &FRETURN{}
+	dreturn = &DRETURN{}
+	areturn = &ARETURN{}
+	_return = &RETURN{}
 	// arraylength   = &ARRAY_LENGTH{}
 	// athrow        = &ATHROW{}
 	// monitorenter  = &MONITOR_ENTER{}
@@ -166,8 +166,8 @@ var (
 	// invoke_native = &INVOKE_NATIVE{}
 )
 
-func NewInstruction(opCode byte) base.Instruction {
-	switch opCode {
+func NewInstruction(opcode byte) base.Instruction {
+	switch opcode {
 	case 0x00:
 		return nop
 	case 0x01:
@@ -512,18 +512,18 @@ func NewInstruction(opCode byte) base.Instruction {
 		return &TABLE_SWITCH{}
 	case 0xab:
 		return &LOOKUP_SWITCH{}
-		// case 0xac:
-		// 	return ireturn
-		// case 0xad:
-		// 	return lreturn
-		// case 0xae:
-		// 	return freturn
-		// case 0xaf:
-		// 	return dreturn
-		// case 0xb0:
-		// 	return areturn
-		// case 0xb1:
-		// 	return _return
+	case 0xac:
+		return ireturn
+	case 0xad:
+		return lreturn
+	case 0xae:
+		return freturn
+	case 0xaf:
+		return dreturn
+	case 0xb0:
+		return areturn
+	case 0xb1:
+		return _return
 	case 0xb2:
 		return &GET_STATIC{}
 	case 0xb3:
@@ -532,15 +532,15 @@ func NewInstruction(opCode byte) base.Instruction {
 		return &GET_FIELD{}
 	case 0xb5:
 		return &PUT_FIELD{}
-	//	case 0xb6:
-	//		return &INVOKE_VIRTUAL{}
-	// case 0xb7:
-	// 	return &INVOKE_SPECIAL{}
-	// case 0xb8:
-	// 	return &INVOKE_STATIC{}
-	// case 0xb9:
-	// 	return &INVOKE_INTERFACE{}
-	// case 0xba:
+	case 0xb6:
+		return &INVOKE_VIRTUAL{}
+	case 0xb7:
+		return &INVOKE_SPECIAL{}
+	case 0xb8:
+		return &INVOKE_STATIC{}
+	case 0xb9:
+		return &INVOKE_INTERFACE{}
+	//case 0xba:
 	// 	return &INVOKE_DYNAMIC{}
 	case 0xbb:
 		return &NEW{}
@@ -576,6 +576,6 @@ func NewInstruction(opCode byte) base.Instruction {
 	// case 0xfe: impdep1
 	// case 0xff: impdep2
 	default:
-		panic(fmt.Errorf("Unsupported opCode: 0x%x!", opCode))
+		panic(fmt.Errorf("Unsupported opcode: 0x%x!", opcode))
 	}
 }
