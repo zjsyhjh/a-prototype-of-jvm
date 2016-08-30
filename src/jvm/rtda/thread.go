@@ -1,5 +1,7 @@
 package rtda
 
+import "jvm/rtda/heap"
+
 /*
  * 线程私有的运行时数据区用于辅助执行Java字节码
  * 每个线程都有自己的PC寄存器(Program Counter)以及Java虚拟机栈(JVM Stack)
@@ -25,8 +27,8 @@ func NewThread() *Thread {
 /*
  * 创建栈帧
  */
-func (td *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
-	return newFrame(td, maxLocals, maxStack)
+func (td *Thread) NewFrame(method *heap.Method) *Frame {
+	return newFrame(td, method)
 }
 
 /*
@@ -62,4 +64,15 @@ func (td *Thread) PopFrame() *Frame {
  */
 func (td *Thread) CurrentFrame() *Frame {
 	return td.stack.top()
+}
+
+/*
+ * 和CurrentFrame一样
+ */
+func (td *Thread) TopFrame() *Frame {
+	return td.stack.top()
+}
+
+func (td *Thread) IsStackEmpty() bool {
+	return td.stack.isEmpty()
 }
