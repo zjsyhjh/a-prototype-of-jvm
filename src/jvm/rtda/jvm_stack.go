@@ -46,3 +46,7 @@ func (s *Stack) top() *Frame {
 	}
 	return s.topFrame
 }
+
+func (s *Stack) isEmpty() bool {
+	return s.topFrame == nil
+}
