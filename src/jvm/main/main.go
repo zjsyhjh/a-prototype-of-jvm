@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"jvm/classfile"
 	"jvm/classpath"
+	"jvm/rtda/heap"
 	"strings"
 )
 
+/*
 func parseClassFile(className string, cp *classpath.ClassPath) *classfile.ClassFile {
-
 	classData, _, err := cp.ReadClass(className)
 	if err != nil {
 		fmt.Printf("Coundn't find or load the Main class, %v\n", className)
@@ -39,18 +39,38 @@ func printClassFileInfo(cf *classfile.ClassFile) {
 	}
 }
 
+func getMainMethod(cf *classfile.ClassFile) *classfile.MemberInfo {
+	for _, method := range cf.Methods() {
+		if method.Name() == "main" && method.Descriptor() == "([Ljava/lang/String;)V" {
+			return method
+		}
+	}
+	return nil
+}
+
+*/
+
 func startJVM(cmd *Cmd) {
 	fmt.Println("JVM is starting...")
 
 	cp := classpath.ParseClassPathOption(cmd.XjreOption, cmd.cpOptinon)
 	fmt.Printf("%v\n", cp)
 	fmt.Printf("class : %v, args : %v\n", cmd.className, cmd.classArgs)
-
 	className := strings.Replace(cmd.className, ".", "/", -1)
+	/*
+		cf := parseClassFile(className, cp)
+		printClassFileInfo(cf)
+		mainMethod := getMainMethod(cf)
+	*/
+	classLoader := heap.NewClassLoader(cp, cmd.verboseClassFlag)
+	mainClass := classLoader.LoadClass(className)
+	mainMethod := mainClass.GetMainMethod()
 
-	cf := parseClassFile(className, cp)
-
-	printClassFileInfo(cf)
+	if mainMethod == nil {
+		fmt.Printf("Main method couldn't found in class %s\n", cmd.className)
+	} else {
+		interpret(mainMethod, cmd.verboseInstFlag)
+	}
 }
 
 /*
