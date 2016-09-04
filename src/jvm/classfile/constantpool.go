@@ -1,8 +1,6 @@
 package classfile
 
-import (
-	"strconv"
-)
+import "strconv"
 
 /*
  * 常量池也是一个表，如果表头给出的值为n，则有效索引为1~n-1, 0无效
