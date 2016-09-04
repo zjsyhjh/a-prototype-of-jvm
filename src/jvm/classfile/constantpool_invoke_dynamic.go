@@ -9,12 +9,12 @@ package classfile
  }
 */
 type ConstantMethodHandleInfo struct {
-	referencekind  uint16
+	referencekind  uint8
 	referenceIndex uint16
 }
 
 func (cmhi *ConstantMethodHandleInfo) readInfo(cr *ClassReader) {
-	cmhi.referencekind = cr.readUint16()
+	cmhi.referencekind = cr.readUint8()
 	cmhi.referenceIndex = cr.readUint16()
 }
 
