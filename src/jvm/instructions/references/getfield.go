@@ -18,7 +18,6 @@ func (self *GET_FIELD) Execute(frame *rtda.Frame) {
 	cp := (frame.Method().Class()).ConstantPool()
 	fieldRef := cp.GetConstant(self.Index).(*heap.FieldRef)
 	field := fieldRef.ResolvedField()
-	class := field.Class()
 
 	if field.IsStatic() {
 		panic("java.lang.IncompatibleClassChangeError")
@@ -33,7 +32,7 @@ func (self *GET_FIELD) Execute(frame *rtda.Frame) {
 
 	descriptor := field.Descriptor()
 	slotID := field.SlotID()
-	slots := class.StaticVars()
+	slots := ref.Fields()
 
 	switch descriptor[0] {
 	case 'Z', 'B', 'C', 'S', 'I':
