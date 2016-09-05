@@ -18,7 +18,6 @@ func parseMethodDescriptor(descriptor string) *MethodDescriptor {
 
 func (self *MethodDescrptorParser) parse(descriptor string) *MethodDescriptor {
 	self.methodDescriptor = descriptor
-	self.offset = 0
 	self.parsed = &MethodDescriptor{}
 
 	self.checkStartParam()
