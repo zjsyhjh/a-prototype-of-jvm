@@ -1,6 +1,7 @@
 package references
 
 import (
+	"fmt"
 	"jvm/instructions/base"
 	"jvm/rtda"
 )
@@ -17,6 +18,7 @@ func (self *ARRAY_LENGTH) Execute(frame *rtda.Frame) {
 	stack := frame.OperandStack()
 	arrayRef := stack.PopRef()
 	if arrayRef == nil {
+		fmt.Printf(">> pc:%4d %v.%v%v \n", frame.NextPC(), frame.Method().Class().Name(), frame.Method().Name(), frame.Method().Descriptor())
 		panic("java.lang.NullPointerException")
 	}
 
