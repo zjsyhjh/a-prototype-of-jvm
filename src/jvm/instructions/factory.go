@@ -11,6 +11,7 @@ import (
 	. "jvm/instructions/loads"
 	. "jvm/instructions/maths"
 	. "jvm/instructions/references"
+	. "jvm/instructions/reserved"
 	. "jvm/instructions/stacks"
 	. "jvm/instructions/stores"
 )
@@ -573,7 +574,8 @@ func NewInstruction(opcode byte) base.Instruction {
 	// case 0xc9:
 	// 	return &JSR_W{}
 	// case 0xca: breakpoint
-	// case 0xfe: impdep1
+	case 0xfe:
+		return invoke_native
 	// case 0xff: impdep2
 	default:
 		panic(fmt.Errorf("Unsupported opcode: 0x%x!", opcode))
