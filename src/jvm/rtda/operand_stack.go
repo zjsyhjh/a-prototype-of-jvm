@@ -99,3 +99,15 @@ func (self *OperandStack) PopSlot() Slot {
 func (self *OperandStack) GetRefFromTop(n uint) *heap.Object {
 	return self.slots[self.size-n-1].reference
 }
+
+func (self *OperandStack) PushBoolean(flag bool) {
+	if flag {
+		self.PushInt(1)
+	} else {
+		self.PushInt(0)
+	}
+}
+
+func (self *OperandStack) PopBoolean() bool {
+	return self.PopInt() == 1
+}
