@@ -51,11 +51,13 @@ func getMainMethod(cf *classfile.ClassFile) *classfile.MemberInfo {
 */
 
 func startJVM(cmd *Cmd) {
-	fmt.Println("JVM is starting...")
+	//fmt.Println("JVM is starting...")
 
 	cp := classpath.ParseClassPathOption(cmd.XjreOption, cmd.cpOptinon)
-	fmt.Printf("%v\n", cp)
-	fmt.Printf("class : %v, args : %v\n", cmd.className, cmd.classArgs)
+	/*
+		fmt.Printf("%v\n", cp)
+		fmt.Printf("class : %v, args : %v\n", cmd.className, cmd.classArgs)
+	*/
 	className := strings.Replace(cmd.className, ".", "/", -1)
 	/*
 		cf := parseClassFile(className, cp)
@@ -69,7 +71,7 @@ func startJVM(cmd *Cmd) {
 	if mainMethod == nil {
 		fmt.Printf("Main method couldn't found in class %s\n", cmd.className)
 	} else {
-		interpret(mainMethod, cmd.verboseInstFlag)
+		interpret(mainMethod, cmd.verboseInstFlag, cmd.classArgs)
 	}
 }
 
