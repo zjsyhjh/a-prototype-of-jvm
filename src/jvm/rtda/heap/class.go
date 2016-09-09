@@ -11,6 +11,7 @@ import (
  * accessFlags是类的访问标志
  * className, superClassName, interfaceNames代表类名、超类名以及接口名， 这些类名都是完全限定名，例如java/lang/String
  * initStarted字段表示类的<clinit>方法是否已经开始执行
+ * jClass为java.lang.Class实例
  */
 type Class struct {
 	accessFlags       uint16
@@ -27,6 +28,7 @@ type Class struct {
 	staticSlotCount   uint
 	staticVars        Slots
 	initStarted       bool
+	jClass            *Object
 }
 
 func newClass(cf *classfile.ClassFile) *Class {
@@ -86,6 +88,24 @@ func (self *Class) Fields() []*Field {
 }
 
 /*
+ * 返回类加载器
+ */
+func (self *Class) Loader() *ClassLoader {
+	return self.classLoader
+}
+
+/*
+ * 返回java.lang.Class
+ */
+func (self *Class) JClass() *Object {
+	return self.jClass
+}
+
+func (self *Class) JavaName() string {
+	return strings.Replace(self.className, "/", ".", -1)
+}
+
+/*
  * 返回方法
  */
 func (self *Class) Methods() []*Method {
@@ -124,6 +144,23 @@ func (self *Class) IsEnum() bool {
 	return (self.accessFlags & ACC_ENUM) != 0
 }
 
+func (self *Class) isJlObject() bool {
+	return self.className == "java/lang/Object"
+}
+
+func (self *Class) isJlCloneable() bool {
+	return self.className == "java/lang/Cloneable"
+}
+
+func (self *Class) isJioSerializable() bool {
+	return self.className == "java/lang/Serializable"
+}
+
+func (self *Class) IsPrimitive() bool {
+	_, ok := primitiveTypes[self.className]
+	return ok
+}
+
 /*
  * other类想要操作self类，需要满足两个条件：self类是public或者在同一个运行时包内
  */
@@ -142,21 +179,53 @@ func (self *Class) GetPackageName() string {
  * public static void main(String[] args)
  */
 func (self *Class) GetMainMethod() *Method {
-	return self.getStaticMethod("main", "([Ljava/lang/String;)V")
+	return self.getMethod("main", "([Ljava/lang/String;)V", true)
 }
 
 /*
  * 返回类初始化方法
  */
 func (self *Class) GetClinitMethod() *Method {
-	return self.getStaticMethod("<clinit>", "()V")
+	return self.getMethod("<clinit>", "()V", true)
 }
 
-func (self *Class) getStaticMethod(name, descriptor string) *Method {
-	for _, method := range self.methods {
-		if method.IsStatic() && method.name == name && method.descriptor == descriptor {
-			return method
+func (self *Class) getMethod(name, descriptor string, isStatic bool) *Method {
+	for c := self; c != nil; c = c.superClass {
+		for _, method := range c.methods {
+			if method.IsStatic() == isStatic && method.name == name && method.descriptor == descriptor {
+				return method
+			}
 		}
 	}
 	return nil
+}
+
+func (self *Class) getField(name, descriptor string, isStatic bool) *Field {
+	for c := self; c != nil; c = c.superClass {
+		for _, field := range c.fields {
+			if field.IsStatic() == isStatic && field.name == name && field.descriptor == descriptor {
+				return field
+			}
+		}
+	}
+	return nil
+}
+
+func (self *Class) ArrayClass() *Class {
+	arrayClassName := getArrayClassName(self.className)
+	return self.classLoader.LoadClass(arrayClassName)
+}
+
+func (self *Class) GetRefVar(fieldName, fieldDescriptor string) *Object {
+	field := self.getField(fieldName, fieldDescriptor, true)
+	return self.staticVars.GetRef(field.slotID)
+}
+
+func (self *Class) SetRefVar(fieldName, fieldDescriptor string, ref *Object) {
+	field := self.getField(fieldName, fieldDescriptor, true)
+	self.staticVars.SetRef(field.slotID, ref)
+}
+
+func (self *Class) GetInstanceMethod(name, descriptor string) *Method {
+	return self.getMethod(name, descriptor, false)
 }
