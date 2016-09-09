@@ -8,22 +8,32 @@ import (
 	"jvm/rtda/heap"
 )
 
-func interpret(method *heap.Method, logInst bool) {
+func interpret(method *heap.Method, logInst bool, classArgs []string) {
 	thread := rtda.NewThread()
 	frame := thread.NewFrame(method)
 	thread.PushFrame(frame)
 
+	jArgs := createArgsArray(method.Class().Loader(), classArgs)
+	frame.LocalVars().SetRef(0, jArgs)
 	defer catchErr(thread)
 	loop(thread, logInst)
 }
 
+/*
+ * 把参数转换成java字符串数组
+ */
+func createArgsArray(loader *heap.ClassLoader, args []string) *heap.Object {
+	stringClass := loader.LoadClass("java/lang/String")
+	argsArray := stringClass.ArrayClass().NewArray(uint(len(args)))
+	jArgs := argsArray.Refs()
+	for i, arg := range args {
+		jArgs[i] = heap.JString(loader, arg)
+	}
+	return argsArray
+}
+
 func catchErr(thread *rtda.Thread) {
 	if r := recover(); r != nil {
-		/*
-			fmt.Printf("LocalVars : %v\n", frame.LocalVars())
-			fmt.Printf("OperandStack : %v\n", frame.OperandStack())
-			panic(r)
-		*/
 		logFrames(thread)
 		panic(r)
 	}
