@@ -19,13 +19,47 @@ type Method struct {
 func newMethods(class *Class, methodMembers []*classfile.MemberInfo) []*Method {
 	methods := make([]*Method, len(methodMembers))
 	for i, memberInfo := range methodMembers {
-		methods[i] = &Method{}
-		methods[i].class = class
-		methods[i].copyClassMemberInfo(memberInfo)
-		methods[i].copyAttributes(memberInfo)
-		methods[i].calArgSlotCount()
+		methods[i] = newMethod(class, memberInfo)
 	}
 	return methods
+}
+
+/*
+ * 本地方法在class文件中没有Code属性，如果是本地方法，则注入字节码及其他信息
+ */
+func newMethod(class *Class, methodMember *classfile.MemberInfo) *Method {
+	method := &Method{}
+	method.class = class
+	method.copyClassMemberInfo(methodMember)
+	method.copyAttributes(methodMember)
+	md := parseMethodDescriptor(method.descriptor)
+	method.calArgSlotCount(md.parameterTypes)
+	if method.IsNative() {
+		method.injectCodeAttribute(md.returnType)
+	}
+	return method
+}
+
+/*
+ * 注入字节码及其他信息
+ */
+func (self *Method) injectCodeAttribute(returnType string) {
+	self.maxStack = 4
+	self.maxLocals = self.argSlotCount
+	switch returnType[0] {
+	case 'V':
+		self.code = []byte{0xfe, 0xb1}
+	case 'D':
+		self.code = []byte{0xfe, 0xaf}
+	case 'F':
+		self.code = []byte{0xfe, 0xae}
+	case 'J':
+		self.code = []byte{0xfe, 0xad}
+	case 'L', '[':
+		self.code = []byte{0xfe, 0xb0}
+	default:
+		self.code = []byte{0xfe, 0xac}
+	}
 }
 
 func (self *Method) copyAttributes(memberInfo *classfile.MemberInfo) {
@@ -39,9 +73,8 @@ func (self *Method) copyAttributes(memberInfo *classfile.MemberInfo) {
 /*
  * 获取方法参数个数，通过解析方法的描述符可以得到
  */
-func (self *Method) calArgSlotCount() {
-	parsedDescriptor := parseMethodDescriptor(self.descriptor)
-	for _, paramType := range parsedDescriptor.parameterTypes {
+func (self *Method) calArgSlotCount(parameterTypes []string) {
+	for _, paramType := range parameterTypes {
 		self.argSlotCount++
 		if paramType == "J" || paramType == "D" {
 			self.argSlotCount++
