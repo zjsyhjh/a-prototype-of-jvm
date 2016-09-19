@@ -29,6 +29,7 @@ type Class struct {
 	staticVars        Slots
 	initStarted       bool
 	jClass            *Object
+	sourceFile        string
 }
 
 func newClass(cf *classfile.ClassFile) *Class {
@@ -40,6 +41,7 @@ func newClass(cf *classfile.ClassFile) *Class {
 	class.constantPool = newConstantPool(class, cf.ConstantPool())
 	class.fields = newFields(class, cf.Fields())
 	class.methods = newMethods(class, cf.Methods())
+	class.sourceFile = getSourceFile(cf)
 	return class
 }
 
@@ -49,6 +51,10 @@ func (self *Class) NewObject() *Object {
 
 func (self *Class) Name() string {
 	return self.className
+}
+
+func (self *Class) SourceFile() string {
+	return self.sourceFile
 }
 
 func (self *Class) InitStarted() bool {
@@ -211,6 +217,13 @@ func (self *Class) getField(name, descriptor string, isStatic bool) *Field {
 	return nil
 }
 
+func getSourceFile(cf *classfile.ClassFile) string {
+	if sfAttr := cf.SourceFileAttribute(); sfAttr != nil {
+		return sfAttr.SourceFileName()
+	}
+	return "unknown"
+}
+
 func (self *Class) ArrayClass() *Class {
 	arrayClassName := getArrayClassName(self.className)
 	return self.classLoader.LoadClass(arrayClassName)
@@ -228,4 +241,8 @@ func (self *Class) SetRefVar(fieldName, fieldDescriptor string, ref *Object) {
 
 func (self *Class) GetInstanceMethod(name, descriptor string) *Method {
 	return self.getMethod(name, descriptor, false)
+}
+
+func (self *Class) GetStaticMethod(name, descriptor string) *Method {
+	return self.getMethod(name, descriptor, true)
 }
