@@ -111,3 +111,14 @@ func (self *OperandStack) PushBoolean(flag bool) {
 func (self *OperandStack) PopBoolean() bool {
 	return self.PopInt() == 1
 }
+
+func (self *OperandStack) Clear() {
+	self.size = 0
+	for i := range self.slots {
+		self.slots[i].reference = nil
+	}
+}
+
+func NewOperandStack(maxStack uint) *OperandStack {
+	return newOperandStack(maxStack)
+}
