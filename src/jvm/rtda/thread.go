@@ -76,3 +76,11 @@ func (td *Thread) TopFrame() *Frame {
 func (td *Thread) IsStackEmpty() bool {
 	return td.stack.isEmpty()
 }
+
+func (td *Thread) ClearStack() {
+	td.stack.clear()
+}
+
+func (td *Thread) GetFrames() []*Frame {
+	return td.stack.getFrames()
+}
