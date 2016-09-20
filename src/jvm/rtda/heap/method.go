@@ -10,10 +10,12 @@ import (
  */
 type Method struct {
 	ClassMember
-	maxStack     uint
-	maxLocals    uint
-	code         []byte
-	argSlotCount uint
+	maxStack        uint
+	maxLocals       uint
+	code            []byte
+	argSlotCount    uint
+	exceptionTable  ExceptionTable
+	lineNumberTable *classfile.LineNumberTableAttribute
 }
 
 func newMethods(class *Class, methodMembers []*classfile.MemberInfo) []*Method {
@@ -67,7 +69,30 @@ func (self *Method) copyAttributes(memberInfo *classfile.MemberInfo) {
 		self.maxStack = codeAttr.MaxStack()
 		self.maxLocals = codeAttr.MaxLocals()
 		self.code = codeAttr.Code()
+		self.exceptionTable = newExceptionTable(codeAttr.ExceptionTable(), self.class.constantPool)
+		self.lineNumberTable = codeAttr.LineNumberTableAttribute()
 	}
+}
+
+func (self *Method) GetLineNumber(pc int) int {
+	if self.IsNative() {
+		return -2
+	}
+	if self.lineNumberTable == nil {
+		return -1
+	}
+	return self.lineNumberTable.GetLineNumber(pc)
+}
+
+/*
+ * 如果找到异常项，则返回handlerPc字段，否则，返回-1
+ */
+func (self *Method) FindExceptionHandler(exClass *Class, pc int) int {
+	handler := self.exceptionTable.findExceptionHandler(exClass, pc)
+	if handler != nil {
+		return handler.handlerPc
+	}
+	return -1
 }
 
 /*
