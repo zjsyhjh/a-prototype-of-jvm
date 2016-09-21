@@ -5,9 +5,9 @@ import (
 	"jvm/instructions"
 	"jvm/instructions/base"
 	"jvm/rtda"
-	"jvm/rtda/heap"
 )
 
+/*
 func interpret(method *heap.Method, logInst bool, classArgs []string) {
 	thread := rtda.NewThread()
 	frame := thread.NewFrame(method)
@@ -18,10 +18,16 @@ func interpret(method *heap.Method, logInst bool, classArgs []string) {
 	defer catchErr(thread)
 	loop(thread, logInst)
 }
+*/
+func interpret(thread *rtda.Thread, logInst bool) {
+	defer catchErr(thread)
+	loop(thread, logInst)
+}
 
 /*
  * 把参数转换成java字符串数组
  */
+/*
 func createArgsArray(loader *heap.ClassLoader, args []string) *heap.Object {
 	stringClass := loader.LoadClass("java/lang/String")
 	argsArray := stringClass.ArrayClass().NewArray(uint(len(args)))
@@ -31,6 +37,7 @@ func createArgsArray(loader *heap.ClassLoader, args []string) *heap.Object {
 	}
 	return argsArray
 }
+*/
 
 func catchErr(thread *rtda.Thread) {
 	if r := recover(); r != nil {
