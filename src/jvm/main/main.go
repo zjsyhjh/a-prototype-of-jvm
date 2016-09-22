@@ -1,11 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"jvm/classpath"
-	"jvm/rtda/heap"
-	"strings"
-)
+import "fmt"
 
 /*
 func parseClassFile(className string, cp *classpath.ClassPath) *classfile.ClassFile {
@@ -49,21 +44,20 @@ func getMainMethod(cf *classfile.ClassFile) *classfile.MemberInfo {
 }
 
 */
-
+/*
 func startJVM(cmd *Cmd) {
 	//fmt.Println("JVM is starting...")
 
 	cp := classpath.ParseClassPathOption(cmd.XjreOption, cmd.cpOptinon)
-	/*
-		fmt.Printf("%v\n", cp)
-		fmt.Printf("class : %v, args : %v\n", cmd.className, cmd.classArgs)
-	*/
+
+	fmt.Printf("%v\n", cp)
+	fmt.Printf("class : %v, args : %v\n", cmd.className, cmd.classArgs)
 	className := strings.Replace(cmd.className, ".", "/", -1)
-	/*
-		cf := parseClassFile(className, cp)
-		printClassFileInfo(cf)
-		mainMethod := getMainMethod(cf)
-	*/
+
+	//cf := parseClassFile(className, cp)
+	//printClassFileInfo(cf)
+	//mainMethod := getMainMethod(cf)
+
 	classLoader := heap.NewClassLoader(cp, cmd.verboseClassFlag)
 	mainClass := classLoader.LoadClass(className)
 	mainMethod := mainClass.GetMainMethod()
@@ -74,7 +68,7 @@ func startJVM(cmd *Cmd) {
 		interpret(mainMethod, cmd.verboseInstFlag, cmd.classArgs)
 	}
 }
-
+*/
 /*
  * 执行go install /path/dir/*
  * 在bin目录下，可以看到可执行文件main, 执行./main [options] class [args...]
@@ -88,6 +82,6 @@ func main() {
 	} else if cmd.helpFlag || cmd.className == "" {
 		printUsage()
 	} else {
-		startJVM(cmd)
+		newJVM(cmd).start()
 	}
 }
